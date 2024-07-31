@@ -4,7 +4,7 @@ from aiogram.types import ReplyKeyboardMarkup, KeyboardButton, Message, ReplyKey
 from aiogram.utils.keyboard import ReplyKeyboardBuilder
 
 from bot.handlers.state import ChangeRobotComfig, ChangeGaz, ChangeCountGazWire
-from bot.crud.crud_for_add import (
+from bot.crud.crud import (
     add_updata_for_robot,
     get_user_by_id,
     add_updata_tip,

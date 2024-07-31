@@ -1,9 +1,7 @@
-from google.oauth2.service_account import Credentials
-from googleapiclient import discovery
+import copy
+from datetime import datetime
 
+from aiogoogle import Aiogoogle
 
-SCOPES = [
-    'https://www.googleapis.com/auth/spreadsheets',
-    'https://www.googleapis.com/auth/drive'
-]
-
+from bot.core import const
+from bot.core.config import settings

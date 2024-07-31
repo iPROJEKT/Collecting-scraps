@@ -5,7 +5,7 @@ from aiogram.types import ReplyKeyboardMarkup, KeyboardButton, Message, ReplyKey
 
 from bot.crud.add_robot import create_robot
 from bot.handlers.state import UserState
-from bot.crud.crud_for_add import get_user_by_id, create_user, get_current_robot_statistic
+from bot.crud.crud import get_user_by_id, create_user, get_current_robot_statistic
 
 
 router = Router()

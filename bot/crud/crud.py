@@ -185,21 +185,6 @@ async def create_defect(
         await session.refresh(result)
 
 
-async def kill_the_nouse(
-    telegramm_id: int
-) -> None:
-    async with AsyncSessionLocal() as session:
-        result = await session.execute(
-            select(LilWAAMerNigga).where(
-                LilWAAMerNigga.user_id == telegramm_id
-            )
-        )
-        user = result.scalar_one_or_none()
-        user.robot_id = 0
-        await session.commit()
-        await session.refresh(user)
-
-
 async def save_observations(
     user_id: int,
     id_robot: int,

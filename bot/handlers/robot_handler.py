@@ -1,11 +1,15 @@
+from aiogoogle import Aiogoogle
+
 from aiogram import Router, F
 from aiogram.types import ReplyKeyboardMarkup, KeyboardButton, Message
 from aiogram.utils.keyboard import ReplyKeyboardBuilder
 
-from bot.crud.crud_for_add import (
+from fastapi import Depends
+
+from bot.crud.crud import (
     add_robot_for_operator,
     get_cell_number,
-    get_current_robot_statistic, kill_the_nouse, get_user_by_id
+    get_current_robot_statistic, get_user_by_id
 )
 
 router = Router()

@@ -2,7 +2,7 @@ from aiogram import Router, F
 from aiogram.fsm.context import FSMContext
 from aiogram.types import ReplyKeyboardMarkup, KeyboardButton, Message, ReplyKeyboardRemove
 
-from bot.crud.crud_for_add import get_user_by_id, save_observations
+from bot.crud.crud import get_user_by_id, save_observations
 from bot.handlers.state import ObserverState
 
 router = Router()

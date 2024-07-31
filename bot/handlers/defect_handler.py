@@ -4,7 +4,7 @@ from aiogram.types import ReplyKeyboardMarkup, KeyboardButton, Message, ReplyKey
 from aiogram.utils.keyboard import ReplyKeyboardBuilder
 
 from bot.handlers.state import DefectState
-from bot.crud.crud_for_add import create_defect, get_cell_number, get_user_by_id
+from bot.crud.crud import create_defect, get_cell_number, get_user_by_id
 
 router = Router()
 
