@@ -22,13 +22,13 @@ async def take_robot(
 ) -> None:
     builder = ReplyKeyboardBuilder()
     builder.row(
-        KeyboardButton(text='Узнать комплектацию робота'),
+        KeyboardButton(text='Состояние установки'),
     )
     builder.row(
-        KeyboardButton(text='Изменить комплектацию робота'),
+        KeyboardButton(text='Обслуживание'),
     )
     builder.row(
-        KeyboardButton(text='Доложить об ошибке'),
+        KeyboardButton(text='Регистация дефектов'),
     )
     builder.row(
         KeyboardButton(text='Завершить сессию на роботе'),
