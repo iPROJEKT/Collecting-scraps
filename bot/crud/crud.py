@@ -1,3 +1,5 @@
+from datetime import timedelta
+
 from sqlalchemy import select
 
 from bot.core.utils import moscow_now
@@ -199,3 +201,12 @@ async def save_observations(
         session.add(result)
         await session.commit()
         await session.refresh(result)
+
+
+async def get_all_incident() -> Incident:
+    ten_minutes_ago = moscow_now(MOSCOW_TZ) - timedelta(minutes=10)
+    async with AsyncSessionLocal() as session:
+        result = await session.execute(
+            select(Incident)
+        )
+        return result.scalars().all()

@@ -1,6 +1,7 @@
 from aiogoogle import Aiogoogle
 
 from aiogram import Router, F
+from aiogram.fsm.context import FSMContext
 from aiogram.types import ReplyKeyboardMarkup, KeyboardButton, Message
 from aiogram.utils.keyboard import ReplyKeyboardBuilder
 
@@ -18,23 +19,25 @@ router = Router()
 @router.message(F.text == 'Робот 1')
 @router.message(F.text == 'Робот 2')
 async def take_robot(
-    message: Message
+    message: Message,
+    state: FSMContext
 ) -> None:
+    await state.clear()
     builder = ReplyKeyboardBuilder()
     builder.row(
         KeyboardButton(text='Состояние установки'),
     )
     builder.row(
-        KeyboardButton(text='Обслуживание'),
+        KeyboardButton(text='Обслуживание установки'),
     )
     builder.row(
         KeyboardButton(text='Регистация дефектов'),
     )
     builder.row(
-        KeyboardButton(text='Завершить сессию на роботе'),
+        KeyboardButton(text='Наблюдения'),
     )
     builder.row(
-        KeyboardButton(text='Наблюдения'),
+        KeyboardButton(text='Завершить сессию на роботе'),
     )
     if message.text == 'Робот 1':
         robot_id_in_funk = 1
@@ -50,7 +53,7 @@ async def take_robot(
     )
 
 
-@router.message(F.text == 'Узнать комплектацию робота')
+@router.message(F.text == 'Состояние установки')
 async def find_out_the_robot_equipment_t(
     message: Message
 ) -> None:

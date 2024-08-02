@@ -16,7 +16,7 @@ from main import logger
 router = Router()
 
 
-@router.message(F.text == 'Изменить комплектацию робота')
+@router.message(F.text == 'Обслуживание установки')
 async def fork(message: Message) -> None:
     user = await get_user_by_id(message.from_user.id)
     builder = ReplyKeyboardBuilder()

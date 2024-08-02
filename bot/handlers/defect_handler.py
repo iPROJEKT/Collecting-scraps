@@ -9,7 +9,7 @@ from bot.crud.crud import create_defect, get_cell_number, get_user_by_id
 router = Router()
 
 
-@router.message(F.text == 'Доложить об ошибке')
+@router.message(F.text == 'Регистация дефектов')
 async def defect_start_handler(
     message: Message,
     state: FSMContext
