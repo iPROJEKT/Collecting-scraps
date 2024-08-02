@@ -15,7 +15,6 @@ async def defect_start_handler(
     state: FSMContext
 ) -> None:
     user = await get_user_by_id(message.from_user.id)
-    print(message.from_user.id)
     builder = ReplyKeyboardBuilder()
     await state.set_state(DefectState.name_of_defect)
     builder.row(
@@ -45,7 +44,6 @@ async def defect_name_of_defect(
     message: Message,
     state: FSMContext
 ) -> None:
-    print(message.from_user.id)
     await state.update_data(name_of_defect=message.text)
     await state.set_state(DefectState.what_happened)
     await message.answer(
@@ -59,7 +57,6 @@ async def defect_name_main_program(
     message: Message,
     state: FSMContext
 ) -> None:
-    print(message.from_user.id)
     await state.update_data(what_happened=message.text)
     await state.set_state(DefectState.name_mp)
     await message.answer(
@@ -73,7 +70,6 @@ async def defect_defect_coordinates(
     message: Message,
     state: FSMContext
 ) -> None:
-    print(message.from_user.id)
     await state.update_data(name_mp=message.text)
     await state.set_state(DefectState.defect_coordinates)
     await message.answer(
