@@ -1,7 +1,5 @@
-import sys
-import os
 import copy
-from datetime import datetime
+from datetime import datetime, timedelta
 import asyncio
 from aiogoogle import Aiogoogle
 from aiogoogle.auth.creds import ServiceAccountCreds
@@ -29,7 +27,11 @@ async def get_spreadsheet_body(
     body['properties']['locale'] = locale
     body['sheets'][0]['properties']['sheetType'] = sheet_type
     body['sheets'][0]['properties']['sheetId'] = sheet_id
-    body['sheets'][0]['properties']['title'] = title
+    body['sheets'][0]['properties']['title'] = title.format(
+        datetime.now().strftime(
+            const.FORMAT
+        )
+    )
     body['sheets'][0]['properties']['gridProperties']['rowCount'] = row_count
     body['sheets'][0]['properties']['gridProperties']['columnCount'] = column_count
     return body
@@ -127,24 +129,33 @@ async def spreadsheet_update_values(service, spreadsheetId, data):
     await request.execute()
 
 
-async def scheduled_update(wrapper_services: Aiogoogle, spreadsheet_id: str):
+async def scheduled_update(wrapper_services: Aiogoogle, last_run_date: datetime):
     while True:
+        today = datetime.now().date()
+        if today > last_run_date:
+            print(f"Creating a new spreadsheet for {today}")
+            last_run_date = today
+            spreadsheet_id = await spreadsheets_create(wrapper_services)
+            await set_user_permissions(spreadsheet_id, wrapper_services)
+
         incidents = await get_all_incident()  # Получаем все инциденты
         if not incidents:
             print("No incidents found.")
         else:
             print(f"Updating spreadsheet with {len(incidents)} incidents.")
         await spreadsheets_update_value(spreadsheet_id, incidents, wrapper_services)
-        await asyncio.sleep(6)
+        await asyncio.sleep(6)  # Спать 24 часа
 
 
 async def init_app():
     app = web.Application()
 
-    async with Aiogoogle(service_account_creds=get_service()) as wrapper_services:
-        spreadsheet_id = await spreadsheets_create(wrapper_services)
-        await set_user_permissions(spreadsheet_id, wrapper_services)
-        await asyncio.create_task(scheduled_update(wrapper_services, spreadsheet_id))
+    # Создаем экземпляр Aiogoogle и используем его
+    service = get_service()
+    async with Aiogoogle(service_account_creds=service) as wrapper_services:
+        # Начальная дата - вчера, чтобы сразу создать новый файл
+        last_run_date = datetime.now().date() - timedelta(days=1)
+        await asyncio.create_task(scheduled_update(wrapper_services, last_run_date))
 
     return app
 
