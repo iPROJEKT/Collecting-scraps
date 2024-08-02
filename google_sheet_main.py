@@ -56,7 +56,6 @@ async def set_user_permissions(
     permissions_body = {
         'type': const.TYPE,
         'role': const.ROLE,
-        'emailAddress': settings.email
     }
     service = await wrapper_services.discover('drive', 'v3')
     await wrapper_services.as_service_account(

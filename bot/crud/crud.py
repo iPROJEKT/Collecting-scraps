@@ -1,6 +1,7 @@
 from datetime import timedelta
 
 from sqlalchemy import select
+from sqlalchemy import desc
 
 from bot.core.utils import moscow_now
 from bot.models.base import AsyncSessionLocal
@@ -171,8 +172,8 @@ async def create_defect(
     what_happened: str,
     name_mp: str,
     defect_coordinates: str,
+    name_user: LilWAAMerNigga,
 ) -> None:
-    istens = await get_current_robot_statistic(robot)
     async with AsyncSessionLocal() as session:
         result = Incident(
             number_robot=robot,
@@ -180,7 +181,7 @@ async def create_defect(
             comment=what_happened,
             name_main_programm=name_mp,
             coord=defect_coordinates,
-            name_user=f'{istens.last_updata_men} {istens.last_updata_men_sur}'
+            name_user=f'{name_user.name} {name_user.surname}'
         )
         session.add(result)
         await session.commit()
@@ -204,7 +205,6 @@ async def save_observations(
 
 
 async def get_all_incident() -> Incident:
-    ten_minutes_ago = moscow_now(MOSCOW_TZ) - timedelta(minutes=10)
     async with AsyncSessionLocal() as session:
         result = await session.execute(
             select(Incident)
@@ -227,6 +227,6 @@ async def create_url(
 async def ger_url() -> str:
     async with AsyncSessionLocal() as session:
         result = await session.execute(
-            select(URLSheet.url)
+            select(URLSheet.url).order_by(desc(URLSheet.id))
         )
         return result.scalars().first()

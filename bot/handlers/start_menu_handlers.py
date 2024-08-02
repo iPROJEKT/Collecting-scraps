@@ -2,9 +2,8 @@ from aiogram import Router, F
 from aiogram.filters import CommandStart
 from aiogram.fsm.context import FSMContext
 from aiogram.types import ReplyKeyboardMarkup, KeyboardButton, Message, ReplyKeyboardRemove
+from aiogram.utils.keyboard import ReplyKeyboardBuilder
 
-from bot.core import const
-from bot.core.config import settings
 from bot.crud.add_robot import create_robot, create_robot2
 from bot.handlers.state import UserState
 from bot.crud.crud import get_user_by_id, create_user, get_current_robot_statistic, ger_url
@@ -18,33 +17,34 @@ router = Router()
 async def command_start(
     message: Message,
 ) -> None:
+    builder_1 = ReplyKeyboardBuilder()
+    builder = ReplyKeyboardBuilder()
+    builder_1.row(
+        KeyboardButton(text='Зарегаться (временная кнопка)'),
+    )
+    builder_1.row(
+        KeyboardButton(text='Узнать состояние роботов'),
+    )
+    builder.row(
+        KeyboardButton(text='Занять робота'),
+    )
+    builder.row(
+        KeyboardButton(text='Узнать состояние роботов'),
+    )
+    builder.row(
+        KeyboardButton(text='Ссылка на таблицу'),
+    )
     if await get_user_by_id(message.from_user.id) == None:
         await message.answer(
             'Привет заводчанин, как сменка?\n'
             'Жаль что я бездушный скрипт и ничего не могу ответить',
-            reply_markup=ReplyKeyboardMarkup(
-                keyboard=[
-                    [
-                        KeyboardButton(text='Узнать состояние роботов'),
-                        KeyboardButton(text='Зарегаться (временная кнопка)'),
-                        KeyboardButton(text='Добавить робота'),
-                    ]
-                ],
-            ),
+            reply_markup=builder_1.as_markup(resize_keyboard=True),
         )
     else:
         await message.answer(
             'Привет заводчанин, как сменка?\n'
             'Жаль что я бездушный скрипт и ничего не могу ответить',
-            reply_markup=ReplyKeyboardMarkup(
-                keyboard=[
-                    [
-                        KeyboardButton(text='Занять робота'),
-                        KeyboardButton(text='Узнать состояние роботов'),
-                        KeyboardButton(text='Ссылка на таблицу'),
-                    ]
-                ],
-            ),
+            reply_markup=builder.as_markup(resize_keyboard=True),
         )
 
 
@@ -82,6 +82,12 @@ async def create_user_state_second(
     message: Message,
     state: FSMContext
 ) -> None:
+    if len(message.text.split()) > 2 or len(message.text.split()) < 2:
+        await message.answer(
+            "Нужно только имя и Фамилия (без отчества)",
+            reply_markup=ReplyKeyboardRemove(),
+        )
+        await create_user_state_second()
     name, surname = message.text.split()
     if name.isalpha():
         await message.answer(
