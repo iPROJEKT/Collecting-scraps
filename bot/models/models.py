@@ -47,3 +47,7 @@ class Observations(Base):
     id_robot = Column(Integer, nullable=False)
     user_id = Column(Integer, nullable=False, unique=False)
     comment = Column(String, nullable=False, unique=False)
+
+
+class URLSheet(Base):
+    url = Column(String)

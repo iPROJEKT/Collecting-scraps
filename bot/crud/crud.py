@@ -4,7 +4,7 @@ from sqlalchemy import select
 
 from bot.core.utils import moscow_now
 from bot.models.base import AsyncSessionLocal
-from bot.models.models import LilWAAMerNigga, RobotState, MOSCOW_TZ, Incident, Observations
+from bot.models.models import LilWAAMerNigga, RobotState, MOSCOW_TZ, Incident, Observations, URLSheet
 
 
 async def create_user(
@@ -210,3 +210,23 @@ async def get_all_incident() -> Incident:
             select(Incident)
         )
         return result.scalars().all()
+
+
+async def create_url(
+    url: str
+) -> None:
+    result = URLSheet(
+        url=url
+    )
+    async with AsyncSessionLocal() as session:
+        session.add(result)
+        await session.commit()
+        await session.refresh(result)
+
+
+async def ger_url() -> str:
+    async with AsyncSessionLocal() as session:
+        result = await session.execute(
+            select(URLSheet.url)
+        )
+        return result.scalars().first()

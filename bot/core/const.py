@@ -18,6 +18,7 @@ ROW_COUNT = 400
 COLUMN_COUNT = 9
 RANGE = r'A1:G400'
 SHEERTYPE = 'GRID'
+ID = None
 TYPE = 'user'
 ROLE = 'writer'
 TABLE_UPDATA = 'ROWS'

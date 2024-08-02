@@ -10,7 +10,7 @@ from sqlalchemy.ext.asyncio import async_engine_from_config
 from alembic import context
 
 from bot.models.base import Base
-from bot.models.models import LilWAAMerNigga, RobotState, Incident, Observations
+from bot.models.models import LilWAAMerNigga, RobotState, Incident, Observations, URLSheet
 
 
 load_dotenv('.env')

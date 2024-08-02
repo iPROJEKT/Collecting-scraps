@@ -3,10 +3,11 @@ from aiogram.filters import CommandStart
 from aiogram.fsm.context import FSMContext
 from aiogram.types import ReplyKeyboardMarkup, KeyboardButton, Message, ReplyKeyboardRemove
 
-from bot.crud.add_robot import create_robot
+from bot.core import const
+from bot.core.config import settings
+from bot.crud.add_robot import create_robot, create_robot2
 from bot.handlers.state import UserState
-from bot.crud.crud import get_user_by_id, create_user, get_current_robot_statistic
-
+from bot.crud.crud import get_user_by_id, create_user, get_current_robot_statistic, ger_url
 
 router = Router()
 
@@ -26,6 +27,7 @@ async def command_start(
                     [
                         KeyboardButton(text='Узнать состояние роботов'),
                         KeyboardButton(text='Зарегаться (временная кнопка)'),
+                        KeyboardButton(text='Добавить робота'),
                     ]
                 ],
             ),
@@ -39,6 +41,7 @@ async def command_start(
                     [
                         KeyboardButton(text='Занять робота'),
                         KeyboardButton(text='Узнать состояние роботов'),
+                        KeyboardButton(text='Ссылка на таблицу'),
                     ]
                 ],
             ),
@@ -108,6 +111,7 @@ async def create_user_state_second(
 @router.message(F.text == 'Добавить робота')
 async def add_ro(message: Message):
     await create_robot()
+    await create_robot2()
     await message.answer(
         f"Проверяй",
         reply_markup=ReplyKeyboardMarkup(
@@ -150,4 +154,15 @@ async def add_ro(message: Message):
                 ]
             ],
         ),
+    )
+
+
+@router.message(F.text == 'Ссылка на таблицу')
+async def get_url(
+    message: Message
+) -> None:
+    ur = 'https://docs.google.com/spreadsheets/d/'
+    id = await ger_url()
+    await message.answer(
+        ur+id
     )

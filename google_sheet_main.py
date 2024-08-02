@@ -6,7 +6,7 @@ from aiogoogle.auth.creds import ServiceAccountCreds
 from aiohttp import web
 
 from bot.core.config import settings
-from bot.crud.crud import get_all_incident
+from bot.crud.crud import get_all_incident, create_url
 from bot.core import const
 
 
@@ -45,7 +45,7 @@ async def spreadsheets_create(
         service.spreadsheets.create(json=await get_spreadsheet_body())
     )
     spreadsheet_id = response['spreadsheetId']
-    print(f"Spreadsheet created: https://docs.google.com/spreadsheets/d/{spreadsheet_id}")
+    await create_url(str(spreadsheet_id))
     return spreadsheet_id
 
 
