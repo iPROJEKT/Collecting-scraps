@@ -50,4 +50,17 @@ class Observations(Base):
 
 
 class URLSheet(Base):
+    """Без вопросов, я не готов"""
     url = Column(String)
+
+
+class Maintenance(Base):
+    """Я до конца уклонялся от этой хрени"""
+    datatime = Column(DateTime, default=moscow_now(MOSCOW_TZ))
+    last_updata_men = Column(String, nullable=False)
+    last_updata_men_sur = Column(String, nullable=False)
+    whot_swap = Column(String, nullable=False)
+    wire_mark = Column(String, nullable=True, default='-')
+    wire_diameter = Column(Float, nullable=True, default='-')
+    name_gaz = Column(String, nullable=True, default='-')
+

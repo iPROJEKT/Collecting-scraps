@@ -5,7 +5,7 @@ from sqlalchemy import select
 
 from bot.core.utils import moscow_now
 from bot.models.base import AsyncSessionLocal
-from bot.models.models import LilWAAMerNigga, RobotState, MOSCOW_TZ, Incident, Observations, URLSheet
+from bot.models.models import LilWAAMerNigga, RobotState, MOSCOW_TZ, Incident, Observations, URLSheet, Maintenance
 
 
 async def create_user(
@@ -232,3 +232,11 @@ async def ger_url() -> str:
             select(URLSheet.url).order_by(desc(URLSheet.id))
         )
         return result.scalars().first()
+
+
+async def get_all_observations() -> List[Observations]:
+    async with AsyncSessionLocal() as session:
+        result = await session.execute(
+            select(Observations)
+        )
+        return result.scalars().all()
