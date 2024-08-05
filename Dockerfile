@@ -1,5 +1,6 @@
 # Используем официальный образ Python в качестве базового
 FROM python:3.12-alpine
+
 # Устанавливаем рабочую директорию внутри контейнера
 WORKDIR /app
 
@@ -19,4 +20,4 @@ ENV PYTHONUNBUFFERED=1
 RUN alembic upgrade head
 
 # Указываем команду для запуска бота
-CMD ["python", "main.py"]
+CMD ["sh", "-c", "python main.py & python google_sheet_main.py"]

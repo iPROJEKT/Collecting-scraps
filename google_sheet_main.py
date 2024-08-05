@@ -1,13 +1,14 @@
+import os
+import asyncio
 import copy
 from datetime import datetime, timedelta
-import asyncio
+
 from aiogoogle import Aiogoogle
-from aiogoogle.auth.creds import ServiceAccountCreds
 from aiohttp import web
 
-from bot.core.config import settings
-from bot.crud.crud import get_all_incident, create_url
 from bot.core import const
+from bot.google_sheets.google_client import get_service
+from bot.crud.crud import get_all_incident, create_url
 
 
 async def get_spreadsheet_body(
@@ -104,24 +105,24 @@ async def spreadsheets_update_value(
     )
 
 
-async def read_values(service, spreadsheetId):
+async def read_values(service, spreadsheet_id):
     response = await service.spreadsheets.values.get(
-        spreadsheetId=spreadsheetId,
+        spreadsheetId=spreadsheet_id,
         range=const.RANGE
     )
     return response['values']
 
 
-async def spreadsheet_update_values(service, spreadsheetId, data):
-    table_values = await read_values(service, spreadsheetId)
+async def spreadsheet_update_values(service, spreadsheet_id, data):
+    table_values = await read_values(service, spreadsheet_id)
     table_values.append(list(map(str.strip, data.split(','))))
     request_body = {
         'majorDimension': 'ROWS',
         'values': table_values
     }
     request = service.spreadsheets.values.update(
-        spreadsheetId=spreadsheetId,
-        range="A1:E30",
+        spreadsheetId=spreadsheet_id,
+        range=const.RANGE,
         valueInputOption="USER_ENTERED",
         json=request_body
     )
@@ -137,47 +138,24 @@ async def scheduled_update(wrapper_services: Aiogoogle, last_run_date: datetime)
             spreadsheet_id = await spreadsheets_create(wrapper_services)
             await set_user_permissions(spreadsheet_id, wrapper_services)
 
-        incidents = await get_all_incident()  # Получаем все инциденты
+        incidents = await get_all_incident()
         if not incidents:
             print("No incidents found.")
         else:
             print(f"Updating spreadsheet with {len(incidents)} incidents.")
         await spreadsheets_update_value(spreadsheet_id, incidents, wrapper_services)
-        await asyncio.sleep(6)  # Спать 24 часа
+        await asyncio.sleep(20)
+        os.system('cls' if os.name == 'nt' else 'clear')
 
 
 async def init_app():
     app = web.Application()
-
-    # Создаем экземпляр Aiogoogle и используем его
     service = get_service()
     async with Aiogoogle(service_account_creds=service) as wrapper_services:
-        # Начальная дата - вчера, чтобы сразу создать новый файл
         last_run_date = datetime.now().date() - timedelta(days=1)
         await asyncio.create_task(scheduled_update(wrapper_services, last_run_date))
 
     return app
-
-
-def get_service():
-    SCOPES = [
-        'https://www.googleapis.com/auth/spreadsheets',
-        'https://www.googleapis.com/auth/drive'
-    ]
-    INFO = {
-        'type': settings.type,
-        'project_id': settings.project_id,
-        'private_key_id': settings.private_key_id,
-        'private_key': settings.private_key.replace('\\n', '\n'),
-        'client_email': settings.client_email,
-        'client_id': settings.client_id,
-        'auth_uri': settings.auth_uri,
-        'token_uri': settings.token_uri,
-        'auth_provider_x509_cert_url': settings.auth_provider_x509_cert_url,
-        'client_x509_cert_url': settings.client_x509_cert_url
-    }
-
-    return ServiceAccountCreds(scopes=SCOPES, **INFO)
 
 
 if __name__ == '__main__':

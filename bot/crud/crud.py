@@ -1,7 +1,7 @@
-from datetime import timedelta
+from typing import List
 
+from sqlalchemy import desc, func
 from sqlalchemy import select
-from sqlalchemy import desc
 
 from bot.core.utils import moscow_now
 from bot.models.base import AsyncSessionLocal
@@ -204,10 +204,12 @@ async def save_observations(
         await session.refresh(result)
 
 
-async def get_all_incident() -> Incident:
+async def get_all_incident() -> List[Incident]:
     async with AsyncSessionLocal() as session:
         result = await session.execute(
-            select(Incident)
+            select(Incident).where(
+                func.date(Incident.datatime) == moscow_now(MOSCOW_TZ).date()
+            )
         )
         return result.scalars().all()
 

@@ -1,3 +1,5 @@
+from bot.core.config import settings
+
 LOG_FORM = '%(asctime)s, %(levelname)s, %(message)s'
 LOG_FILEMOD = 'w'
 LOG_FILENAME = 'logger.log'
@@ -20,7 +22,7 @@ RANGE = r'A1:G400'
 SHEERTYPE = 'GRID'
 ID = None
 TYPE = 'anyone'
-ROLE = 'writer'
+ROLE = 'reader'
 TABLE_UPDATA = 'ROWS'
 FILDS_FOR_SERVIS_ACCOUNT = 'id'
 SHEERTID = 0
@@ -47,4 +49,20 @@ SPREADSHEET_BODY = {
         }
         }
     ]
+}
+SCOPES = [
+    'https://www.googleapis.com/auth/spreadsheets',
+    'https://www.googleapis.com/auth/drive'
+]
+INFO = {
+    'type': settings.type,
+    'project_id': settings.project_id,
+    'private_key_id': settings.private_key_id,
+    'private_key': settings.private_key.replace('\\n', '\n'),
+    'client_email': settings.client_email,
+    'client_id': settings.client_id,
+    'auth_uri': settings.auth_uri,
+    'token_uri': settings.token_uri,
+    'auth_provider_x509_cert_url': settings.auth_provider_x509_cert_url,
+    'client_x509_cert_url': settings.client_x509_cert_url
 }
