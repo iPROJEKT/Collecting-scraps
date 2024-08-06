@@ -1,8 +1,8 @@
-"""First migration
+"""add Maintenance
 
-Revision ID: 5ad399f7222f
+Revision ID: 9568949aed23
 Revises: 
-Create Date: 2024-08-02 11:17:53.419629
+Create Date: 2024-08-05 22:42:58.329182
 
 """
 from typing import Sequence, Union
@@ -12,7 +12,7 @@ import sqlalchemy as sa
 
 
 # revision identifiers, used by Alembic.
-revision: str = '5ad399f7222f'
+revision: str = '9568949aed23'
 down_revision: Union[str, None] = None
 branch_labels: Union[str, Sequence[str], None] = None
 depends_on: Union[str, Sequence[str], None] = None
@@ -39,6 +39,17 @@ def upgrade() -> None:
     sa.Column('id', sa.Integer(), autoincrement=True, nullable=False),
     sa.PrimaryKeyConstraint('id'),
     sa.UniqueConstraint('user_id')
+    )
+    op.create_table('maintenance',
+    sa.Column('datatime', sa.DateTime(), nullable=True),
+    sa.Column('last_updata_men', sa.String(), nullable=False),
+    sa.Column('last_updata_men_sur', sa.String(), nullable=False),
+    sa.Column('whot_swap', sa.String(), nullable=False),
+    sa.Column('wire_mark', sa.String(), nullable=True),
+    sa.Column('wire_diameter', sa.Float(), nullable=True),
+    sa.Column('name_gaz', sa.String(), nullable=True),
+    sa.Column('id', sa.Integer(), autoincrement=True, nullable=False),
+    sa.PrimaryKeyConstraint('id')
     )
     op.create_table('observations',
     sa.Column('id_robot', sa.Integer(), nullable=False),
@@ -75,6 +86,7 @@ def downgrade() -> None:
     op.drop_table('urlsheet')
     op.drop_table('robotstate')
     op.drop_table('observations')
+    op.drop_table('maintenance')
     op.drop_table('lilwaamernigga')
     op.drop_table('incident')
     # ### end Alembic commands ###

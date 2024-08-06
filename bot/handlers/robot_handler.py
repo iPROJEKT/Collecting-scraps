@@ -1,11 +1,7 @@
-from aiogoogle import Aiogoogle
-
 from aiogram import Router, F
 from aiogram.fsm.context import FSMContext
 from aiogram.types import ReplyKeyboardMarkup, KeyboardButton, Message
 from aiogram.utils.keyboard import ReplyKeyboardBuilder
-
-from fastapi import Depends
 
 from bot.crud.crud import (
     add_robot_for_operator,

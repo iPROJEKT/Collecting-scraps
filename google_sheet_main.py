@@ -7,7 +7,7 @@ from aiogoogle import Aiogoogle
 from aiohttp import web
 
 from bot.core import const
-from bot.crud.crud import get_all_incident, create_url, get_all_observations, get_user_by_id
+from bot.crud.crud import get_all_incident, create_url, get_all_observations, get_user_by_id, get_all_maintenance
 from bot.google_sheets.google_client import get_service
 
 
@@ -80,6 +80,7 @@ async def spreadsheets_update_value(
                 str(item.datatime),
             ]
             table.append(new_row)
+
     elif sheet_title == "Наблюдения":
         for item in data:
             user = await get_user_by_id(item.user_id)
@@ -90,9 +91,19 @@ async def spreadsheets_update_value(
                 str(item.comment),
             ]
             table.append(new_row)
-    elif sheet_title == "OOO":
+
+    elif sheet_title == "Обслуживаниие":
         for item in data:
-            new_row = [str(item.wire_mark)]
+            new_row = [
+                str(item.datatime),
+                str(item.last_updata_men),
+                str(item.last_updata_men_sur),
+                str(item.whot_swap),
+                str(item.wire_mark),
+                str(item.wire_diameter),
+                str(item.name_gaz),
+                str(item.robot_id),
+            ]
             table.append(new_row)
 
     update_body = {
@@ -145,7 +156,7 @@ async def create_sheets(spreadsheet_id: str, wrapper_services: Aiogoogle) -> Non
         {
             "addSheet": {
                 "properties": {
-                    "title": "OOO",
+                    "title": "Обслуживаниие",
                     "sheetType": const.SHEERTYPE,
                     "gridProperties": {
                         "rowCount": const.ROW_COUNT,
@@ -183,6 +194,7 @@ async def scheduled_update(wrapper_services: Aiogoogle, last_run_date: datetime)
 
         incidents = await get_all_incident()
         all_observations = await get_all_observations()
+        maintenance = await get_all_maintenance()
 
         if not incidents:
             print("No Дефекты found.")
@@ -193,8 +205,14 @@ async def scheduled_update(wrapper_services: Aiogoogle, last_run_date: datetime)
         if not all_observations:
             print("No Наблюдения found.")
         else:
-            print(f"Updating Reggh sheet with {len(all_observations)} Наблюдения.")
+            print(f"Updating Наблюдения sheet with {len(all_observations)} Наблюдения.")
         await spreadsheets_update_value(spreadsheet_id, all_observations, wrapper_services, "Наблюдения")
+
+        if not maintenance:
+            print("No Обслуживание found.")
+        else:
+            print(f"Updating Обслуживание sheet with {len(maintenance)} Обслуживаниие.")
+        await spreadsheets_update_value(spreadsheet_id, maintenance, wrapper_services, "Обслуживаниие")
 
         await asyncio.sleep(20)
         os.system('cls' if os.name == 'nt' else 'clear')

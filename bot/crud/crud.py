@@ -82,8 +82,8 @@ async def add_updata_for_robot(
     robot: int,
     diametr: float,
     mark: str,
-    last_updata_men: str,
-    last_updata_men_sur: str
+    last_men: str,
+    last_men_sur: str
 ) -> None:
     async with AsyncSessionLocal() as session:
         result = await session.execute(
@@ -94,18 +94,29 @@ async def add_updata_for_robot(
         robot = result.scalar_one_or_none()
         robot.wire_mark = mark
         robot.wire_diameter = diametr
-        robot.last_updata_men = last_updata_men
+        robot.last_updata_men = last_men
         robot.tip_data_change = moscow_now(MOSCOW_TZ)
         robot.wire = 10
-        robot.last_updata_men_sur = last_updata_men_sur
+        robot.last_updata_men_sur = last_men_sur
         await session.commit()
         await session.refresh(robot)
+        maintenance_record = Maintenance(
+            whot_swap='Замена проволоки',
+            wire_mark=mark,
+            wire_diameter=diametr,
+            last_updata_men=last_men,
+            last_updata_men_sur=last_men_sur,
+            robot_id=robot.id_robot
+        )
+        session.add(maintenance_record)
+        await session.commit()
+        await session.refresh(maintenance_record)
 
 
 async def add_updata_tip(
     robot_id: int,
-    last_updata_men: str,
-    last_updata_men_sur: str
+    last_men: str,
+    last_men_sur: str
 ) -> None:
     async with AsyncSessionLocal() as session:
         result = await session.execute(
@@ -114,18 +125,27 @@ async def add_updata_tip(
             )
         )
         robot = result.scalar_one_or_none()
-        robot.last_updata_men = last_updata_men
-        robot.last_updata_men_sur = last_updata_men_sur
+        robot.last_updata_men = last_men
+        robot.last_updata_men_sur = last_men_sur
         robot.tip_data_change = moscow_now(MOSCOW_TZ)
         await session.commit()
         await session.refresh(robot)
+        maintenance_record = Maintenance(
+            whot_swap='Замена наконечника',
+            last_updata_men=last_men,
+            last_updata_men_sur=last_men_sur,
+            robot_id=robot.id_robot
+        )
+        session.add(maintenance_record)
+        await session.commit()
+        await session.refresh(maintenance_record)
 
 
 async def add_updata_gaz(
     robot: int,
-    last_updata_men: str,
+    last_men: str,
     gaz_name: str,
-    last_updata_men_sur: str
+    last_men_sur: str
 ) -> None:
     async with AsyncSessionLocal() as session:
         result = await session.execute(
@@ -134,13 +154,23 @@ async def add_updata_gaz(
             )
         )
         robot = result.scalar_one_or_none()
-        robot.last_updata_men = last_updata_men
-        robot.last_updata_men_sur = last_updata_men_sur
+        robot.last_updata_men = last_men
+        robot.last_updata_men_sur = last_men_sur
         robot.name_gaz = gaz_name
         robot.gaz_state = 10.0
         robot.tip_data_change = moscow_now(MOSCOW_TZ)
         await session.commit()
         await session.refresh(robot)
+        maintenance_record = Maintenance(
+            whot_swap='Замена газа',
+            name_gaz=gaz_name,
+            last_updata_men=last_men,
+            last_updata_men_sur=last_men_sur,
+            robot_id=robot.id_robot
+        )
+        session.add(maintenance_record)
+        await session.commit()
+        await session.refresh(maintenance_record)
 
 
 async def updata_gaz_ware(
@@ -238,5 +268,15 @@ async def get_all_observations() -> List[Observations]:
     async with AsyncSessionLocal() as session:
         result = await session.execute(
             select(Observations)
+        )
+        return result.scalars().all()
+
+
+async def get_all_maintenance() -> List[Maintenance]:
+    async with AsyncSessionLocal() as session:
+        result = await session.execute(
+            select(Maintenance).where(
+                func.date(Maintenance.datatime) == moscow_now(MOSCOW_TZ).date()
+            )
         )
         return result.scalars().all()

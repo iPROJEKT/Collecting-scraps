@@ -61,6 +61,7 @@ class Maintenance(Base):
     last_updata_men_sur = Column(String, nullable=False)
     whot_swap = Column(String, nullable=False)
     wire_mark = Column(String, nullable=True, default='-')
-    wire_diameter = Column(Float, nullable=True, default='-')
+    wire_diameter = Column(Float, nullable=True, default=0)
     name_gaz = Column(String, nullable=True, default='-')
+    robot_id = Column(Integer, nullable=True)
 

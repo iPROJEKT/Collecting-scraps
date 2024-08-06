@@ -98,9 +98,9 @@ async def complite_change(
     await add_updata_for_robot(
         diametr=diameter,
         mark=mark,
-        last_updata_men=user.name,
+        last_men=user.name,
         robot=user.robot_id,
-        last_updata_men_sur=user.surname,
+        last_men_sur=user.surname,
     )
     await message.answer(
         "Успешно",
@@ -121,9 +121,9 @@ async def tip_change(
 ) -> None:
     user = await get_user_by_id(message.from_user.id)
     await add_updata_tip(
-        last_updata_men=user.name,
+        last_men=user.name,
         robot_id=user.robot_id,
-        last_updata_men_sur=user.surname
+        last_men_sur=user.surname
     )
     updated_user = await get_user_by_id(message.from_user.id)
     logger.info(f"User after tip change: {updated_user}")
@@ -171,9 +171,9 @@ async def gaz_change_state(
     user = await get_user_by_id(message.from_user.id)
     await add_updata_gaz(
         robot=user.robot_id,
-        last_updata_men=user.name,
+        last_men=user.name,
         gaz_name=message.text,
-        last_updata_men_sur=user.surname
+        last_men_sur=user.surname
     )
     await message.answer(
         "Успешно",

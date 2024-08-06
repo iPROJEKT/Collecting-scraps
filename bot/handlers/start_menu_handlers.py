@@ -151,8 +151,8 @@ async def add_ro(message: Message):
         f'Проволка - {curent_robot_state_t.wire_mark}\n'
         f'Диаметр - {curent_robot_state_t.wire_diameter}\n'
         f'Прошлая смена наконечника - {tip_updata_t}\n'
-        f'Газ {curent_robot_state.name_gaz} - {curent_robot_state.gaz_state} АТМ\n'
-        f'Произвел - {curent_robot_state_t.last_updata_men} {curent_robot_state.last_updata_men_sur}\n',
+        f'Газ {curent_robot_state_t.name_gaz} - {curent_robot_state_t.gaz_state} АТМ\n'
+        f'Произвел - {curent_robot_state_t.last_updata_men} {curent_robot_state_t.last_updata_men_sur}\n',
         reply_markup=ReplyKeyboardMarkup(
             keyboard=[
                 [
