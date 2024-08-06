@@ -65,10 +65,19 @@ async def spreadsheets_update_value(
         wrapper_services: Aiogoogle,
         sheet_title: str,
 ) -> None:
-    table = [[const.A1, datetime.now().strftime(const.FORMAT)]]
+    table_for_def = copy.deepcopy(const.TABLE_VALUES_FOR_DEF)
+    table_for_obs = copy.deepcopy(const.TABLE_VALUES_FOR_OBS)
+    table_values_for_meh = copy.deepcopy(const.TABLE_VALUES_FOR_MEH)
+
+    current_time = datetime.now().strftime(const.FORMAT)
+    table_for_def[0] = [const.A1, current_time]
+    table_for_obs[0] = [const.A1, current_time]
+    table_values_for_meh[0] = [const.A1, current_time]
+
     service = await wrapper_services.discover('sheets', 'v4')
 
     if sheet_title == "Дефекты":
+        table = table_for_def
         for item in data:
             new_row = [
                 str(item.number_robot),
@@ -82,22 +91,22 @@ async def spreadsheets_update_value(
             table.append(new_row)
 
     elif sheet_title == "Наблюдения":
+        table = table_for_obs
         for item in data:
             user = await get_user_by_id(item.user_id)
             new_row = [
                 str(item.id_robot),
-                str(user.name),
-                str(user.surname),
+                f'{user.name} {user.surname}',
                 str(item.comment),
             ]
             table.append(new_row)
 
     elif sheet_title == "Обслуживаниие":
+        table = table_values_for_meh
         for item in data:
             new_row = [
                 str(item.datatime),
-                str(item.last_updata_men),
-                str(item.last_updata_men_sur),
+                f'{item.last_updata_men} {item.last_updata_men_sur}',
                 str(item.whot_swap),
                 str(item.wire_mark),
                 str(item.wire_diameter),
@@ -105,6 +114,8 @@ async def spreadsheets_update_value(
                 str(item.robot_id),
             ]
             table.append(new_row)
+    else:
+        raise ValueError(f"Unknown sheet title: {sheet_title}")
 
     update_body = {
         'majorDimension': const.TABLE_UPDATA,

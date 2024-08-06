@@ -5,7 +5,7 @@ LOG_FILEMOD = 'w'
 LOG_FILENAME = 'logger.log'
 TOKEN_EXECT = 'Token is invalid!'
 A1 = 'Отчет от'
-A2 = 'Номер установк'
+A2 = 'Номер установки'
 B2 = 'Что случились (наименование дефекта)'
 C2 = 'Кто зафиксировал'
 D2 = 'Развернутое пояснение'
@@ -28,9 +28,17 @@ FILDS_FOR_SERVIS_ACCOUNT = 'id'
 SHEERTID = 0
 ROW_COUNT_ERROR = 'Слишком много дефектов'
 COLUMN_COUNT_ERROR = 'В таблице всего 7 столбцов'
-TABLE_VALUES = [
+TABLE_VALUES_FOR_DEF = [
     [A1],
     [A2, B2, C2, D2, E2, F2, G2]
+]
+TABLE_VALUES_FOR_OBS = [
+    [A1],
+    [A2, C2, D2]
+]
+TABLE_VALUES_FOR_MEH = [
+    [A1],
+    [G2, C2, 'Замена', 'Марка проволки', 'Диаметр', 'Газ', A2]
 ]
 SPREADSHEET_BODY = {
     'properties': {
