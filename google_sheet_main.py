@@ -1,3 +1,4 @@
+import re
 import os
 import asyncio
 import copy
@@ -79,13 +80,14 @@ async def spreadsheets_update_value(
     if sheet_title == "Дефекты":
         table = table_for_def
         for item in data:
+            coord = item.coord.split(',')
             new_row = [
                 str(item.number_robot),
                 str(item.incident),
                 str(item.name_user),
                 str(item.comment),
                 str(item.name_main_programm),
-                str(item.coord),
+                f'{coord}'[1:-2],
                 str(item.datatime),
             ]
             table.append(new_row)
