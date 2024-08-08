@@ -9,7 +9,7 @@ from bot.models.base import Base
 MOSCOW_TZ = pytz.timezone('Europe/Moscow')
 
 
-class LilWAAMerNigga(Base):
+class LilWAAMerNiggafff(Base):
     """Называю калассы как хочу, если кто увидит - круто будет"""
     user_id = Column(Integer, unique=True, nullable=False)
     name = Column(String, unique=False, nullable=False)

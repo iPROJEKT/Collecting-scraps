@@ -78,6 +78,30 @@ async def get_current_robot_statistic(
         return result.scalars().first()
 
 
+async def create_maintenance_record(
+    whot_swap=None,
+    wire_mark='-',
+    wire_diameter: float = 0.0,
+    last_updata_men=None,
+    last_updata_men_sur=None,
+    robot_id=None,
+    name_gaz='-',
+    session=None
+) -> None:
+    maintenance_record = Maintenance(
+        whot_swap=whot_swap,
+        wire_mark=wire_mark,
+        wire_diameter=wire_diameter,
+        last_updata_men=last_updata_men,
+        last_updata_men_sur=last_updata_men_sur,
+        robot_id=robot_id,
+        name_gaz=name_gaz,
+    )
+    session.add(maintenance_record)
+    await session.commit()
+    await session.refresh(maintenance_record)
+
+
 async def add_updata_for_robot(
     robot: int,
     diametr: float,
@@ -100,17 +124,15 @@ async def add_updata_for_robot(
         robot.last_updata_men_sur = last_men_sur
         await session.commit()
         await session.refresh(robot)
-        maintenance_record = Maintenance(
-            whot_swap='Замена проволоки',
+        await create_maintenance_record(
+            session=session,
+            robot_id=robot.id_robot,
             wire_mark=mark,
-            wire_diameter=diametr,
             last_updata_men=last_men,
             last_updata_men_sur=last_men_sur,
-            robot_id=robot.id_robot
+            whot_swap='Замента проволки',
+            wire_diameter=diametr
         )
-        session.add(maintenance_record)
-        await session.commit()
-        await session.refresh(maintenance_record)
 
 
 async def add_updata_tip(
@@ -130,15 +152,13 @@ async def add_updata_tip(
         robot.tip_data_change = moscow_now(MOSCOW_TZ)
         await session.commit()
         await session.refresh(robot)
-        maintenance_record = Maintenance(
+        await create_maintenance_record(
+            session=session,
             whot_swap='Замена наконечника',
             last_updata_men=last_men,
             last_updata_men_sur=last_men_sur,
             robot_id=robot.id_robot
         )
-        session.add(maintenance_record)
-        await session.commit()
-        await session.refresh(maintenance_record)
 
 
 async def add_updata_gaz(
@@ -161,16 +181,14 @@ async def add_updata_gaz(
         robot.tip_data_change = moscow_now(MOSCOW_TZ)
         await session.commit()
         await session.refresh(robot)
-        maintenance_record = Maintenance(
+        await create_maintenance_record(
+            session=session,
             whot_swap='Замена газа',
             name_gaz=gaz_name,
             last_updata_men=last_men,
             last_updata_men_sur=last_men_sur,
             robot_id=robot.id_robot
         )
-        session.add(maintenance_record)
-        await session.commit()
-        await session.refresh(maintenance_record)
 
 
 async def updata_gaz_ware(
